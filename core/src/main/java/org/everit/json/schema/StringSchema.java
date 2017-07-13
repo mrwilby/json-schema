@@ -24,6 +24,8 @@ public class StringSchema extends Schema {
 
         private String pattern;
 
+        private String defaultValue;
+
         private boolean requiresString = true;
 
         private FormatValidator formatValidator = FormatValidator.NONE;
@@ -66,6 +68,10 @@ public class StringSchema extends Schema {
             return this;
         }
 
+        public Builder defaultValue(final String defaultValue) {
+            this.defaultValue = defaultValue;
+            return this;
+        }
     }
 
     public static Builder builder() {
@@ -77,6 +83,8 @@ public class StringSchema extends Schema {
     private final Integer maxLength;
 
     private final Pattern pattern;
+
+    private final String defaultValue;
 
     private final boolean requiresString;
 
@@ -102,6 +110,7 @@ public class StringSchema extends Schema {
             this.pattern = null;
         }
         this.formatValidator = builder.formatValidator;
+        this.defaultValue = builder.defaultValue;
     }
 
     public Integer getMaxLength() {
@@ -114,6 +123,10 @@ public class StringSchema extends Schema {
 
     public Pattern getPattern() {
         return pattern;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
     }
 
     private List<ValidationException> testLength(final String subject) {
@@ -168,6 +181,7 @@ public class StringSchema extends Schema {
                     Objects.equals(minLength, that.minLength) &&
                     Objects.equals(maxLength, that.maxLength) &&
                     Objects.equals(patternIfNotNull(pattern), patternIfNotNull(that.pattern)) &&
+                    Objects.equals(defaultValue, that.defaultValue) &&
                     Objects.equals(formatValidator, that.formatValidator) &&
                     super.equals(that);
         } else {
@@ -189,7 +203,7 @@ public class StringSchema extends Schema {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), minLength, maxLength, pattern, requiresString, formatValidator);
+        return Objects.hash(super.hashCode(), minLength, maxLength, pattern, requiresString, formatValidator, defaultValue);
     }
 
     @Override
@@ -208,5 +222,6 @@ public class StringSchema extends Schema {
         if (formatValidator != null) {
             writer.key("format").value(formatValidator.formatName());
         }
+        writer.ifPresent("default", defaultValue);
     }
 }

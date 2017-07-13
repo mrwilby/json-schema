@@ -17,6 +17,8 @@ package org.everit.json.schema;
 
 import org.everit.json.schema.internal.JSONPrinter;
 
+import java.util.Objects;
+
 /**
  * Boolean schema validator.
  */
@@ -27,9 +29,16 @@ public class BooleanSchema extends Schema {
      */
     public static class Builder extends Schema.Builder<BooleanSchema> {
 
+        private Boolean defaultValue;
+
         @Override
         public BooleanSchema build() {
             return new BooleanSchema(this);
+        }
+
+        public Builder defaultValue(final Boolean defaultValue) {
+            this.defaultValue = defaultValue;
+            return this;
         }
 
     }
@@ -40,8 +49,11 @@ public class BooleanSchema extends Schema {
         return new Builder();
     }
 
+    private final Boolean defaultValue;
+
     public BooleanSchema(final Builder builder) {
         super(builder);
+        defaultValue = builder.defaultValue;
     }
 
     @Override
@@ -55,6 +67,7 @@ public class BooleanSchema extends Schema {
     void describePropertiesTo(final JSONPrinter writer) {
         writer.key("type");
         writer.value("boolean");
+        writer.ifPresent("default", defaultValue);
     }
 
     @Override
@@ -64,7 +77,9 @@ public class BooleanSchema extends Schema {
         }
         if (o instanceof BooleanSchema) {
             BooleanSchema that = (BooleanSchema) o;
-            return that.canEqual(this) && super.equals(that);
+            return that.canEqual(this) &&
+                    Objects.equals(this.defaultValue, that.defaultValue) &&
+                    super.equals(that);
         } else {
             return false;
         }
@@ -72,7 +87,7 @@ public class BooleanSchema extends Schema {
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Objects.hash(super.hashCode(), defaultValue);
     }
 
     @Override

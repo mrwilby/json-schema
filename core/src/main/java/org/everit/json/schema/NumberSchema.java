@@ -29,6 +29,8 @@ public class NumberSchema extends Schema {
 
         private boolean requiresInteger = false;
 
+        private Number defaultValue;
+
         @Override
         public NumberSchema build() {
             return new NumberSchema(this);
@@ -69,6 +71,11 @@ public class NumberSchema extends Schema {
             return this;
         }
 
+        public Builder defaultValue(final Number defaultValue) {
+            this.defaultValue = defaultValue;
+            return this;
+        }
+
     }
 
     public static Builder builder() {
@@ -89,6 +96,8 @@ public class NumberSchema extends Schema {
 
     private final boolean requiresInteger;
 
+    private final Number defaultValue;
+
     public NumberSchema() {
         this(builder());
     }
@@ -107,6 +116,7 @@ public class NumberSchema extends Schema {
         this.multipleOf = builder.multipleOf;
         this.requiresNumber = builder.requiresNumber;
         this.requiresInteger = builder.requiresInteger;
+        this.defaultValue = builder.defaultValue;
     }
 
     private void checkMaximum(final double subject) {
@@ -194,6 +204,7 @@ public class NumberSchema extends Schema {
                     Objects.equals(minimum, that.minimum) &&
                     Objects.equals(maximum, that.maximum) &&
                     Objects.equals(multipleOf, that.multipleOf) &&
+                    Objects.equals(defaultValue, that.defaultValue) &&
                     super.equals(that);
         } else {
             return false;
@@ -212,12 +223,13 @@ public class NumberSchema extends Schema {
         writer.ifPresent("multipleOf", multipleOf);
         writer.ifTrue("exclusiveMinimum", exclusiveMinimum);
         writer.ifTrue("exclusiveMaximum", exclusiveMaximum);
+        writer.ifPresent("default", defaultValue);
     }
 
     @Override
     public int hashCode() {
         return Objects
-                .hash(super.hashCode(), requiresNumber, minimum, maximum, multipleOf, exclusiveMinimum, exclusiveMaximum, requiresInteger);
+                .hash(super.hashCode(), requiresNumber, minimum, maximum, multipleOf, exclusiveMinimum, exclusiveMaximum, requiresInteger, defaultValue);
     }
 
     @Override

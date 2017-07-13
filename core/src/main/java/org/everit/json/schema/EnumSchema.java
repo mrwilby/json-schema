@@ -53,6 +53,8 @@ public class EnumSchema extends Schema {
 
         private Set<Object> possibleValues = new HashSet<>();
 
+        private Object defaultValue;
+
         @Override
         public EnumSchema build() {
             return new EnumSchema(this);
@@ -67,6 +69,11 @@ public class EnumSchema extends Schema {
             this.possibleValues = possibleValues;
             return this;
         }
+
+        public Builder defaultValue(final Object defaultValue) {
+            this.defaultValue = defaultValue;
+            return this;
+        }
     }
 
     public static Builder builder() {
@@ -75,13 +82,20 @@ public class EnumSchema extends Schema {
 
     private final Set<Object> possibleValues;
 
+    private final Object defaultValue;
+
     public EnumSchema(final Builder builder) {
         super(builder);
         possibleValues = Collections.unmodifiableSet(toJavaValues(builder.possibleValues));
+        defaultValue = builder.defaultValue;
     }
 
     public Set<Object> getPossibleValues() {
         return possibleValues;
+    }
+
+    public Object getDefaultValue() {
+        return defaultValue;
     }
 
     @Override
@@ -103,6 +117,7 @@ public class EnumSchema extends Schema {
         writer.array();
         possibleValues.forEach(writer::value);
         writer.endArray();
+        writer.ifPresent("default", defaultValue);
     }
 
     @Override
@@ -114,6 +129,7 @@ public class EnumSchema extends Schema {
             EnumSchema that = (EnumSchema) o;
             return that.canEqual(this) &&
                     Objects.equals(possibleValues, that.possibleValues) &&
+                    Objects.equals(defaultValue, that.defaultValue) &&
                     super.equals(that);
         } else {
             return false;
@@ -122,7 +138,7 @@ public class EnumSchema extends Schema {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), possibleValues);
+        return Objects.hash(super.hashCode(), possibleValues, defaultValue);
     }
 
     @Override
