@@ -219,7 +219,7 @@ public class StringSchema extends Schema {
         writer.ifPresent("minLength", minLength);
         writer.ifPresent("maxLength", maxLength);
         writer.ifPresent("pattern", pattern);
-        if (formatValidator != null) {
+        if (formatValidator != null && formatValidator != FormatValidator.NONE) {
             writer.key("format").value(formatValidator.formatName());
         }
         writer.ifPresent("default", defaultValue);
